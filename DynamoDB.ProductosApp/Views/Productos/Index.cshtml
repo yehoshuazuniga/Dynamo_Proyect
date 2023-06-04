@@ -1,0 +1,72 @@
+﻿@model DynamoDB.Contracts.ProductosVeiwModel
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<a asp-controller="Productos" asp-action="Create"
+class="btn btn-primary my-2 float-md-right">Add Reader</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Acciones Proveedores</th>
+            <th>Proveedores</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="mx-auto">
+            <td>
+                <form class="form" method="get" asp-controller="Productos" asp-action="Index">
+                    <div class="input-group mb-3">
+                        <input type="text" name="userName" class="form-control"
+                               placeholder="User Name" aria-label="UserName" aria-describedby="button-addon2" />
+                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Buscar</button>
+                    </div>
+                </form>
+            </td>
+            @if (Model.ResultType == DynamoDB.Contracts.ResultType.Search)
+            {
+                <td class="py-md-3">
+                    <a class="py-4 stretched-link" asp-controller="Productos" asp-action="Index">Limpiar</a>
+                </td>
+            }
+        </tr>
+        @foreach (DynamoDB.Contracts.Producto row in Model.Productos)
+        {
+            <tr>
+                <td>@row.Id</td>
+                <td>@row.Nombre</td>
+                <td>@row.Precio</td>
+                <td>@row.Stock</td>
+                <td>
+                    <div class="d-flex justify-content-center">
+                        <div class=" btn-group">
+                            <a asp-controller="Prductos" asp-action="AddProvider" asp-route-productoId="@row.Id">Añadir</a>
+                            <a asp-controller="Prductos" asp-action="Edit" asp-route-productoId="@row.Id">Eliminar</a>
+                        </div>
+                    </div>
+
+                </td>
+                <td>
+                    <select asp-items="@new SelectList(row.Proveedores)" class="form-control">
+
+                 </select>
+                </td>
+
+                <td><a asp-controller="Productos" asp-action="Edit" asp-route-productoId="@row.Id">Edit</a></td>
+                <td><a asp-controller="Productos" asp-action="Delete" asp-route-productoId="@row.Id">Delete</a></td>
+            </tr>
+        }
+        @if (Model == null || Model.Productos.Count() == 0)
+        {
+            <tr>
+                <td colspan="6">No records found</td>
+            </tr>
+        }
+    </tbody>
+</table>

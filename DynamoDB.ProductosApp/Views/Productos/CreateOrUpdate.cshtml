@@ -1,0 +1,43 @@
+﻿@model DynamoDB.Contracts.ProductoImputModel
+@{
+    string productoId = "";
+    if (ViewBag.productoId != null)
+        productoId = ViewBag.productoId.ToString();
+
+    string action = "";
+
+    if (Model != null && Model.inputType == DynamoDB.Contracts.InputType.Update) {
+        action = "Edit";
+    }
+    else
+        action = "Create";
+}
+
+<form method="post" asp-controller="Productos" asp-route-readerId="@productoId" asp-action="@action">
+    <div class="form-group">
+        <label asp-for="Nombre"></label>
+        <input class="form-control" asp-for="Nombre" type="text" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Precio"></label>
+        <input class="form-control" asp-for="Precio" type="text" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Stock"></label>
+        <input class="form-control" asp-for="Stock" type="text" />
+       
+    </div>
+    @if (action != "Edit")
+    {
+        <div class="form-group">
+            <label asp-for="Proveedores">Añadir proveedor</label>
+            <input class="form-control" asp-for="Proveedores" type="text" />
+        </div>
+    }
+    else
+    {
+        <input asp-for="inputType" type="hidden" value="@DynamoDB.Contracts.InputType.Update" />
+
+    }
+    <button class="btn btn-primary" type="submit">Guardar</button>
+</form>
