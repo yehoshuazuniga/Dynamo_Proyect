@@ -5,39 +5,71 @@
         productoId = ViewBag.productoId.ToString();
 
     string action = "";
+    Boolean read = false;
 
-    if (Model != null && Model.inputType == DynamoDB.Contracts.InputType.Update) {
+    if (Model != null && Model.inputType == DynamoDB.Contracts.InputType.Update)
         action = "Edit";
+    else if (Model != null && Model.inputType == DynamoDB.Contracts.InputType.addProvider){
+        action = "addProvider";
+        read = true;
+
     }
+    else if (Model != null && Model.inputType == DynamoDB.Contracts.InputType.removeProvider){
+        action = "removeProvider";
+        read = true;
+        }
     else
         action = "Create";
+
 }
 
-<form method="post" asp-controller="Productos" asp-route-readerId="@productoId" asp-action="@action">
-    <div class="form-group">
-        <label asp-for="Nombre"></label>
-        <input class="form-control" asp-for="Nombre" type="text" />
+<form method="post" asp-controller="Productos" asp-route-productoId="@productoId" asp-action="@action">
+    <div class="form-floating">
+        <input class="form-control" asp-for="Nombre" type="text" readonly="@read" />
+        <label class=" form-label" class=" form-label" asp-for="Nombre"></label>
+
     </div>
-    <div class="form-group">
-        <label asp-for="Precio"></label>
-        <input class="form-control" asp-for="Precio" type="text" />
+    <div class=" form-floating">
+        <input class="form-control" asp-for="Precio" type="text" readonly="@read" />
+        <label asp-for="Precio" ></label>
+
     </div>
-    <div class="form-group">
-        <label asp-for="Stock"></label>
-        <input class="form-control" asp-for="Stock" type="text" />
-       
+    <div class=" form-floating">
+        <input class="form-control" asp-for="Stock" type="text" readonly="@read" />
+        <label class=" form-label" asp-for="Stock"></label>
+
+
     </div>
-    @if (action != "Edit")
+    @if (action != "Edit" && action != "removeProvider")
     {
-        <div class="form-group">
-            <label asp-for="Proveedores">Añadir proveedor</label>
+        <div class=" form-floating">
             <input class="form-control" asp-for="Proveedores" type="text" />
+            <label class=" form-label" asp-for="Proveedores">Añadir proveedor</label>
+
         </div>
+   
     }
     else
     {
         <input asp-for="inputType" type="hidden" value="@DynamoDB.Contracts.InputType.Update" />
 
     }
-    <button class="btn btn-primary" type="submit">Guardar</button>
+    <button class="btn btn-primary mt-3" type="submit">Guardar</button>
+
+    @if (action == "removeProvider" || action == "addProvider")
+    {
+        <div class="form-group mt-3 col-12 col-lg-3">
+            <label>Eliminar Proveedor</label>
+            <ul class="list-group">
+                @foreach (var li in ViewData["proveedores"] as IEnumerable<string>)
+                {
+                    <li class="list-group-item">@li <a asp-controller="Productos" asp-action="removeProvider"
+                    asp-route-productoId="@productoId" asp-route-provider="@li"
+                    class="btn btn-outline-danger ms-5"
+                    > Eliminar</a></li>
+
+                }
+            </ul>
+        </div>
+    }
 </form>

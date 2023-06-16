@@ -71,7 +71,7 @@ namespace DynamoDB.Core
             return await _context.ScanAsync<Producto>(scanConditions, null).GetRemainingAsync();
 
         }
-
+        //quita productos
         public async Task Remove(Guid prductoId)
         {
             await _context.DeleteAsync<Producto>(prductoId);
@@ -89,6 +89,15 @@ namespace DynamoDB.Core
             producto.Nombre = entity.Nombre;
             producto.Precio = entity.Precio;
             producto.Stock = entity.Stock;
+            if(entity.inputType== DynamoDB.Contracts.InputType.addProvider)
+            {
+                producto.Proveedores.Add(entity.Proveedores.First());
+            }
+            if (entity.inputType == DynamoDB.Contracts.InputType.removeProvider)
+            {
+                producto.Proveedores.Remove(entity.Proveedores.First());
+
+            }
 
             await _context.SaveAsync(producto);
             
